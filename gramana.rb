@@ -16,7 +16,12 @@ gramana = TelegramBot.new(token: ARGV[0])
 # Processing every message the bot recieves
 gramana.get_updates(fail_silently: true) do |message|
   puts "got message: #{message.text}"                           # Display in stdout the latest message recieved
-  word = message.text.split(" ")[0]                             # Get the message's first word to search its anagrams
+  # Build the word to search an anagram for
+  word = if message.text                                        # If the sent message isn't empty,
+           message.text.split(" ")[0]                           # get the message's first word to search its anagrams.
+         else                                                   # If it is,
+           "a"                                                  # get a generic word that won't return anything.
+         end
 
   # Building the reply
   message.reply do |reply|
