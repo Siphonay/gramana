@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
 # coding: utf-8
-# gramanaa: a Telegram anagram bot
+# gramana: a Telegram anagram bot
 # Written in Ruby by Alexis « Sam » « Siphoné » Viguié on the 18-09-2016
 # No license applied
 
