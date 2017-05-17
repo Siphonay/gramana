@@ -31,9 +31,9 @@ begin
         gramana_bot.api.send_message(chat_id: message.chat.id,
                                      text:
                                        if reply_anagrams.size != 0
-                                         "Sorry! No anagrams found for #{word}"
+                                         "Anagram#{"s" if reply_anagrams.size > 1} for #{word}:\n#{reply_anagrams.join("\n")}"                                         
                                        else
-                                         "Anagram#{"s" if reply_anagrams.size > 1} for #{word}:\n#{reply_anagrams.join("\n")}"
+                                         "Sorry! No anagrams found for #{word}"
                                        end)
       end
     end
