@@ -10,9 +10,7 @@ abort "please specify a telegram bot api token in argument." unless ARGV[0]
 
 begin
   Telegram::Bot::Client.run(ARGV[0]) do |gramana_bot|
-    gramana_bot.listen do |message|
-      puts "got message from #{message.from.username}: #{message.text}"
-      
+    gramana_bot.listen do |message|      
       case message.text
       when "/start"
         gramana_bot.api.send_message(chat_id: message.chat.id, text: "Hello, #{message.from.first_name}! Please send me a word, and I'll reply with its anagrams if I there are any!")
