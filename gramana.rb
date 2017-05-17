@@ -1,47 +1,42 @@
 #!/usr/bin/env ruby
 # coding: utf-8
 # gramana: a Telegram anagram bot
-# Written in Ruby by Alexis « Sam » « Siphoné » Viguié on the 18-09-2016
+# Written in Ruby by Alexis « Sam » « Siphoné » Viguié
 # No license applied
 
-# Loading the required gem to make use of Telegram's bot API
-require 'telegram_bot'
+require 'telegram/bot'
 
-# Exiting the program if no argument is specified
 abort "please specify a telegram bot api token in argument." unless ARGV[0]
 
-# Use the token passed in argument
-gramana = TelegramBot.new(token: ARGV[0])
-
-# Processing every message the bot recieves
-gramana.get_updates(fail_silently: true) do |message|
-  puts "got message: #{message.text}"                           # Display in stdout the latest message recieved
-  # Build the word to search an anagram for
-  word = if message.text                                        # If the sent message isn't empty,
-           message.text.split(" ")[0].downcase                  # get the message's first word to search its anagrams.
-         else                                                   # If it is,
-           "a"                                                  # get a generic word that won't return anything.
-         end
-
-  # Building the reply
-  message.reply do |reply|
-    reply_anagrams = `an -w -m #{word.length} #{word}`                  # Calls the "an" command to find anagrams of words of the same lenght as the argument word
-                     .split("\n")                                       # Split the command output in order to process it as an array
-                     .map { |anagram| anagram.downcase }                # Lowercase all found anagrams
-                     .uniq                                              # Remove duplicates
-                     .delete_if { |anagram| anagram == word }           # If present, delete the original word from the results
-
-    # Building the string                 
-    reply.text = if reply_anagrams.size != 0                            # If the anagram list isn't empty,
-                   "anagrams for #{word}: #{reply_anagrams.join(" ")}"  # add them all to the message as words separated by spaces.
-                 else                                                   # If it is,
-                   "no anagrams found."                                 # report it.
-                 end
-
-    puts "sending message: #{reply.text}"                               # Display in stdout the next message that will be sent
-    reply.send_with(gramana)                                            # Sending the reply
+begin
+  Telegram::Bot::Client.run(ARGV[0]) do |gramana_bot|
+    gramana_bot.listen do |message|
+      puts "got message from #{message.from.username}: #{message.text}"
+      
+      case message.text
+      when "/start"
+        gramana_bot.api.send_message(chat_id: message.chat.id, text: "Hello, #{message.from.first_name}! Please send me a word, and I'll reply with its anagrams if I there are any!")
+      when false
+        gramana_bot.api.send_message(chat_id: message.chat.id, text: "Please send me a message with text in it!")
+      else
+        word = message.text.split(" ")[0].downcase
+        
+        reply_anagrams = `an -w -m #{word.length} #{word}`
+                           .split("\n")
+                           .map { |anagram| anagram.downcase }
+                           .uniq
+                           .delete_if { |anagram| anagram == word }
+        
+        gramana_bot.api.send_message(chat_id: message.chat.id,
+                                     text:
+                                       if reply_anagrams.size != 0
+                                         "Sorry! No anagrams found for #{word}"
+                                       else
+                                         "Anagram#{"s" if reply_anagrams.size > 1} for #{word}:\n#{reply_anagrams.join("\n")}"
+                                       end)
+      end
+    end
   end
+rescue
+  retry
 end
-
-# Sending an error code and message if the message loop is exited somehow
-abort "this should not have happened."
