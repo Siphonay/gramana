@@ -17,7 +17,7 @@ begin
       when "/start"
         puts "user #{message.from.username} started interacting with the bot"
         gramana_bot.api.send_message(chat_id: message.chat.id, text: "Hello, #{message.from.first_name}! Please send me a word, and I'll reply with its anagrams if I there are any!")
-      when ""
+      when nil
         gramana_bot.api.send_message(chat_id: message.chat.id, text: "Please send me a message with text in it!")
       else 
         word = message.text.split(" ")[0].downcase
