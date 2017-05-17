@@ -19,7 +19,7 @@ begin
         gramana_bot.api.send_message(chat_id: message.chat.id, text: "Hello, #{message.from.first_name}! Please send me a word, and I'll reply with its anagrams if I there are any!")
       when false
         gramana_bot.api.send_message(chat_id: message.chat.id, text: "Please send me a message with text in it!")
-      else
+      else 
         word = message.text.split(" ")[0].downcase
         
         reply_anagrams = `an -w -m #{word.length} #{word}`
@@ -38,7 +38,7 @@ begin
       end
     end
   end
-rescue
-  STDERR.puts "got an exception!"
+rescue => error
+  STDERR.puts "got error: #{error}"
   retry
 end
