@@ -31,7 +31,7 @@ begin
         # Building the anagram list
         reply_anagrams = `an -w -m #{word.length} #{word}`                                                                                                                              # call the "an" system command with it,
                            .split("\n")                                                                                                                                                 # make a table of the returned words, separating them with the newlines,
-                           .map { |anagram| anagram.downcase }                                                                                                                          # make them all lowercase,
+                           .map { |anagram| anagram.downcase.delete("'") }                                                                                                              # make them all lowercase and remove single quotes,
                            .uniq                                                                                                                                                        # delete non-unique words,
                            .delete_if { |anagram| anagram == word }                                                                                                                     # delete the word itself if it is present,
 
